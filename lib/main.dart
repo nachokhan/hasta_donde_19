@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 
+import './widgets/wselecthome.dart';
 import './widgets/wdistance.dart';
-import 'widgets/wmap.dart';
+import './widgets/wmap.dart';
 
 void main() {
   runApp(MyApp());
@@ -33,11 +34,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  static final _myHome = LatLng(-32.9556782, -68.8547009);
+  static LatLng _initialCameraPosition = LatLng(-32.9556782, -68.8547009);
+  var _myHome = _initialCameraPosition;
   LatLng _myPosition;
-  Position currentLocation;
   double _distance = 0.0;
-  CameraPosition _initialPosition = CameraPosition(target: _myHome, zoom: 12);
+  CameraPosition _initialPosition = CameraPosition(target: _initialCameraPosition, zoom: 12);
   var trackLocation = false;
   final double _maxAllowedMeters = 5000;
 
@@ -82,15 +83,18 @@ class _MyHomePageState extends State<MyHomePage> {
     getUserLocation();
   }
 
+  LatLng newHome;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-        //centerTitle: true,
         actions: <Widget>[
-          IconButton(icon: Icon(Icons.home), onPressed: null),
-          IconButton(icon: Icon(Icons.track_changes), onPressed: getLocation),          
+          IconButton(
+              icon: Icon(Icons.home),
+              onPressed: () => onPressSelectHome(context)),
+          IconButton(icon: Icon(Icons.track_changes), onPressed: getLocation),
           //IconButton(icon: null, onPressed: null)
         ],
       ),
@@ -103,9 +107,31 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  onChangeHomeAddress(LatLng newHome)
+  {
+    setState(() {
+      _myHome = newHome;
+    });
+    
+  }
+
+  onPressSelectHome(BuildContext context) {
+    showModalBottomSheet(
+        context: context, builder: (context) => getSelectHomeWidget(context));
+  }
+
+  getSelectHomeWidget(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onLongPress: () => print("soltame jiji"),
+      onTap: () => {},
+      child: WSelectHome((newHome) => onChangeHomeAddress(newHome)),
+    );
+  }
+
   /// GET USER LOCATION
   getUserLocation() async {
-    currentLocation = await Geolocator()
+    var currentLocation = await Geolocator()
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
     setState(() {
