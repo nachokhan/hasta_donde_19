@@ -66,7 +66,7 @@ class WDistance extends StatelessWidget {
 
     if (dist >= 1000) {
       unidad = "Km";
-      numero = (_distance / 1000.0).toStringAsFixed(1);
+      numero = (dist / 1000.0).toStringAsFixed(1);
     }
 
     return "$numero $unidad";
