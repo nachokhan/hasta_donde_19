@@ -6,7 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class WMap extends StatelessWidget {
   final CameraPosition _initialPosition;
   final LatLng _myHome;
-  Completer<GoogleMapController> _controller = Completer();
+  final Completer<GoogleMapController> _controller = Completer();
 
   WMap(this._initialPosition, this._myHome);
 
