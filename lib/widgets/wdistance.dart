@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 class WDistance extends StatelessWidget {
   final double _distance;
   final bool isTracking;
+  final double maxAllowedMeters;
 
-  WDistance(this._distance, this.isTracking);
+  WDistance(this._distance, this.isTracking, this.maxAllowedMeters);
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,7 @@ class WDistance extends StatelessWidget {
       );
     }
 
-    if (_distance >= 5000) {
+    if (_distance >= this.maxAllowedMeters) {
       return TextStyle(
         fontSize: 20,
         backgroundColor: Colors.red,
@@ -43,18 +44,31 @@ class WDistance extends StatelessWidget {
   }
 
   String getStringDistance() {
-    String unidad = "m";
-    String numero = _distance.toStringAsFixed(1);
-
     if (!isTracking) {
       return "GPS is OFF";
     }
 
-    if (_distance >= 1000) {
+    var distancia = getDistanceWithUnitsAsString(_distance);
+
+    String text = "Dist a casa: $distancia";
+
+    if (_distance >= this.maxAllowedMeters) {
+      var ex = getDistanceWithUnitsAsString(_distance - this.maxAllowedMeters);
+      text += "\nExcedido en: $ex";
+    }
+
+    return text;
+  }
+
+  String getDistanceWithUnitsAsString(double dist) {
+    var numero = dist.toStringAsFixed(1);
+    var unidad = "m";
+
+    if (dist >= 1000) {
       unidad = "Km";
       numero = (_distance / 1000.0).toStringAsFixed(1);
     }
 
-    return "Dist a casa: $numero $unidad";
+    return "$numero $unidad";
   }
 }

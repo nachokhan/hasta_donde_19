@@ -39,6 +39,7 @@ class _MyHomePageState extends State<MyHomePage> {
   double _distance = 0.0;
   CameraPosition _initialPosition = CameraPosition(target: _myHome, zoom: 12);
   var trackLocation = false;
+  final double _maxAllowedMeters = 5000;
 
   StreamSubscription<Position> strSubscription;
 
@@ -96,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Stack(
         children: <Widget>[
           WMap(this._initialPosition, _myHome),
-          WDistance(_distance, trackLocation),
+          WDistance(_distance, trackLocation, _maxAllowedMeters),
         ],
       ),
     );
