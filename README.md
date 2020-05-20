@@ -32,3 +32,7 @@ https://flutter.dev/docs/development/data-and-backend/state-mgmt/simple
 ### Streams
 
 https://medium.com/@ayushpguptaapg/using-streams-in-flutter-62fed41662e4
+
+### Persisting small data (shared_preferences)
+
+https://medium.com/flutterdevs/using-sharedpreferences-in-flutter-251755f07127
