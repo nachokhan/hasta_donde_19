@@ -4,7 +4,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:por_donde/controllers/locationController.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// import './widgets/wselecthome.dart';
+//import './widgets/wselecthome.dart';
 import './widgets/wdistance.dart';
 import './widgets/wmap.dart';
 
@@ -16,12 +16,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'MendoBike',
+      title: '¿Por dónde andar?',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: '¿Por dónde 🚴🏾‍♂️🏃🏾?'),
+      //home: MyHomePage(title: '¿Por dónde 🚴🏾‍♂️🏃🏾?'),
+      home: MyHomePage(title: '¿Por dónde andar?'),
     );
   }
 }
@@ -96,11 +97,14 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Color.fromARGB(255, 0, 128, 126),
         leading: Image.asset('assets/images/appicon.png'),
         actions: <Widget>[
+        /*  IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () => onPressSelectHome(context),
+          ),*/
           IconButton(
-              icon: Icon(Icons.search),
-              onPressed: () => onPressSelectHome(context)),
-          IconButton(
-              icon: Icon(Icons.track_changes), onPressed: changeGetLocation),
+            icon: Icon(Icons.track_changes),
+            onPressed: changeGetLocation,
+          ),
           //IconButton(icon: null, onPressed: null)
         ],
       ),
@@ -120,6 +124,56 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
     );
+  }
+
+  showButtonAddAsHome() {
+    Widget wid;
+
+    if (showAddAsHome) {
+      wid = Stack(
+        children: <Widget>[
+          Positioned(
+            top: 60,
+            height: 40,
+            right: 15,
+            child: RaisedButton(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              textColor: Colors.white,
+              color: Color.fromARGB(255, 0, 128, 120),
+              elevation: 5,
+              child: Text("Es mi Casa!"),
+              onPressed: changeHomeAddress,
+            ),
+          ),
+          Positioned(
+            top: 105,
+            height: 40,
+            right: 15,
+            child: RaisedButton(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              textColor: Colors.white,
+              color: Color.fromARGB(255, 0, 128, 120),
+              elevation: 5,
+              child: Text("Cancelar"),
+              onPressed: cancelHomeSelection,
+            ),
+          ),
+        ],
+      );
+    } else {
+      wid = Container();
+    }
+
+    return wid;
+  }
+
+  void cancelHomeSelection() {
+    setState(() {
+      recentlySearchedAddress = null;
+      showAddAsHome = false;
+    });
   }
 
   void onNewAddressSearched(LatLng newAddress) {
@@ -149,35 +203,6 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  showButtonAddAsHome() {
-    Widget wid;
-
-    if (showAddAsHome) {
-      wid = Stack(
-        children: <Widget>[
-          Positioned(
-            top: 60,
-            height: 40,
-            right: 15,
-            child: RaisedButton(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-              textColor: Colors.white,
-              onPressed: changeHomeAddress,
-              color: Colors.green,
-              elevation: 5,
-              child: Text("Es mi Casa!"),
-            ),
-          )
-        ],
-      );
-    } else {
-      wid = Container();
-    }
-
-    return wid;
-  }
-
   void saveHomeLocationInDisk() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setDouble("homeLatitude", _myHome.latitude);
@@ -189,6 +214,13 @@ class _MyHomePageState extends State<MyHomePage> {
     double lat = prefs.getDouble("homeLatitude");
     double lon = prefs.getDouble("homeLongitude");
 
-    return LatLng(lat, lon);
+    LatLng pos;
+
+    if (lat == null || lon == null)
+      pos = _initialCameraPos;
+    else
+      pos = LatLng(lat, lon);
+
+    return pos;
   }
 }
