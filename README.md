@@ -10,3 +10,16 @@ So it is just an app for the person who uses it. No one else can see it.
 ## Notes
 
 Feel free to contact me if you want to contribute to this project.
+
+## Help
+
+### Google Maps Widget
+
+https://medium.com/comunidad-flutter/google-maps-en-flutter-98bedecb528b
+
+
+### GeoLocator Plugin
+
+https://alligator.io/flutter/geolocator-plugin/
+https://pub.dev/packages/geolocator#-readme-tab-
+
