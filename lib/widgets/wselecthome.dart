@@ -16,42 +16,44 @@ class _WSelectHomeState extends State<WSelectHome> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        Positioned(
-          top: 5,
-          left: 15,
-          right: 15,
-          child: Container(
-            height: 50,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: Colors.black),
-              color: Colors.white,
-            ),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: "Address",
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.only(left: 15.0, top: 15.0),
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.search),
-                  onPressed: () {
-                    searchAndNavigate();
-                  },
-                  iconSize: 30.0,
-                ),
+    return Container(
+      child: Stack(
+        children: <Widget>[
+          Positioned(
+            top: 5,
+            left: 15,
+            right: 15,
+            child: Container(
+              height: 50,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.black),
+                color: Colors.white,
               ),
-              onChanged: (value) {
-                setState(() {
-                  address = value;
-                });
-              },
+              child: TextField(
+                autofocus: true,
+                decoration: InputDecoration(
+                  hintText: "Address",                  
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.only(left: 15.0, top: 15.0),
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: searchAndNavigate,
+                    iconSize: 30.0,
+                  ),
+                ),
+                onSubmitted: (value) => searchAndNavigate(),
+                onChanged: (value) {
+                  setState(() {
+                    address = value;
+                  });
+                },
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

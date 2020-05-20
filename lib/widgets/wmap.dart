@@ -4,21 +4,34 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class WMap extends StatelessWidget {
-  final CameraPosition _initialPosition;
   final LatLng _myHome;
+  final LatLng _recentlySearchedAdress;
   final Completer<GoogleMapController> _controller = Completer();
+  final Function longPress;
 
-  WMap(this._initialPosition, this._myHome);
+  WMap(this._myHome, this._recentlySearchedAdress, this.longPress);
 
   @override
   Widget build(BuildContext context) {
     return GoogleMap(
       onMapCreated: _onMapCreated,
-      initialCameraPosition: _initialPosition,
+      onLongPress: (pos) => longPress(pos),
+      initialCameraPosition: getInitialPosition(),
       myLocationButtonEnabled: true,
       myLocationEnabled: true,
       markers: {
-        Marker(markerId: MarkerId("home"), position: _myHome),
+        //if (_recentlySearchedAdress == null)
+        Marker(
+          markerId: MarkerId("home"),
+          position: _myHome,
+          infoWindow: InfoWindow(title: "Casa"),
+        ),
+        if (_recentlySearchedAdress != null)
+          Marker(
+              markerId: MarkerId("recentlySearched"),
+              position: _recentlySearchedAdress,
+              icon: BitmapDescriptor.defaultMarkerWithHue(
+                  BitmapDescriptor.hueGreen)),
       },
       circles: {
         Circle(
@@ -33,5 +46,16 @@ class WMap extends StatelessWidget {
 
   void _onMapCreated(GoogleMapController controller) {
     _controller.complete(controller);
+  }
+
+  CameraPosition getInitialPosition() {
+    CameraPosition cam;
+
+    if (_recentlySearchedAdress != null)
+      cam = CameraPosition(target: _recentlySearchedAdress, zoom: 9.0);
+    else
+      cam = CameraPosition(target: _myHome, zoom: 11.8);
+
+    return cam;
   }
 }

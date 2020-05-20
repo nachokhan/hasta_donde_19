@@ -1,8 +1,7 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:por_donde/controllers/locationController.dart';
 
 import './widgets/wselecthome.dart';
 import './widgets/wdistance.dart';
@@ -34,56 +33,50 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  static LatLng _initialCameraPosition = LatLng(-32.9556782, -68.8547009);
-  var _myHome = _initialCameraPosition;
+  static LatLng _initialCameraPos = LatLng(-32.9556782, -68.8547009);
+  var _myHome = _initialCameraPos;
   LatLng _myPosition;
   double _distance = 0.0;
-  CameraPosition _initialPosition =
-      CameraPosition(target: _initialCameraPosition, zoom: 12);
   final double _maxAllowedMeters = 5000;
 
+  LatLng recentlySearchedAddress;
+
   var trackLocation = false;
-  var showHomeSelector = false;
+  var showAddressSearch = false;
+  var showAddAsHome = false;
 
-  StreamSubscription<Position> strSubscription;
-
-  getLocation() {
+  changeGetLocation() {
     if (trackLocation) {
       setState(() {
         trackLocation = false;
       });
-      strSubscription.cancel();
-      strSubscription = null;
+      GeoLocationController().stopListening();
     } else {
       setState(() {
         trackLocation = true;
       });
-      if (strSubscription == null) {
-        const LocationOptions locOptions =
-            LocationOptions(accuracy: LocationAccuracy.best);
-        final Stream<Position> posStream =
-            Geolocator().getPositionStream(locOptions);
-
-        strSubscription = posStream.listen((Position pos) {
-          setState(() {
-            _myPosition = LatLng(pos.latitude, pos.longitude);
-            calculateDistanceToHome();
-          });
-        });
-
-        strSubscription.onDone(() {
-          setState(() {
-            trackLocation = false;
-          });
-        });
-      }
+      GeoLocationController().startListening((pos) => onPositionChanged(pos));
     }
+  }
+
+  onPositionChanged(Position pos) {
+    setState(() {
+      _myPosition = LatLng(pos.latitude, pos.longitude);
+      GeoLocationController()
+          .calculateDistanceToHome(_myPosition, _myHome)
+          .then((value) => _distance = value);
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    getUserLocation();
+
+    GeoLocationController()
+        .getUserLocation()
+        .then((value) => _myPosition = LatLng(value.latitude, value.longitude));
+
+    changeGetLocation();
   }
 
   LatLng newHome;
@@ -97,57 +90,77 @@ class _MyHomePageState extends State<MyHomePage> {
           IconButton(
               icon: Icon(Icons.search),
               onPressed: () => onPressSelectHome(context)),
-          IconButton(icon: Icon(Icons.track_changes), onPressed: getLocation),
+          IconButton(
+              icon: Icon(Icons.track_changes), onPressed: changeGetLocation),
           //IconButton(icon: null, onPressed: null)
         ],
       ),
       body: Stack(
         children: <Widget>[
-          WMap(this._initialPosition, _myHome),
+          WMap(_myHome, recentlySearchedAddress,
+              (pos) => onNewAddressSearched(pos)),
           WDistance(_distance, trackLocation, _maxAllowedMeters),
-          showHomeSelector ? WSelectHome((newHome) => onChangeHomeAddress(newHome)): Container(),
+          /*showAddressSearch
+              ? WSelectHome((newHome) => onNewAddressSearched(newHome))
+              : Container(),*/
+          showButtonAddAsHome(),
         ],
       ),
     );
   }
 
-  onChangeHomeAddress(LatLng newHome) {
+  void onNewAddressSearched(LatLng newAddress) {
     setState(() {
-      _myHome = newHome;
-      showHomeSelector = false;
+      recentlySearchedAddress = newAddress;
+      showAddAsHome = true;
     });
+  }
+
+  changeHomeAddress() {
+    setState(() {
+      if (recentlySearchedAddress != null) {
+        _myHome = recentlySearchedAddress;
+        showAddressSearch = false;
+        showAddAsHome = false;
+      }
+    });
+    recentlySearchedAddress = null;
   }
 
   onPressSelectHome(BuildContext context) {
     setState(() {
-      showHomeSelector = !showHomeSelector;
+      showAddressSearch = !showAddressSearch;
+      showAddAsHome = false;
+      recentlySearchedAddress = null;
     });
   }
 
-  getSelectHomeWidget(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onLongPress: () => print("soltame jiji"),
-      onTap: () => {},
-      child: WSelectHome((newHome) => onChangeHomeAddress(newHome)),
-    );
-  }
+  showButtonAddAsHome() {
+    Widget wid;
 
-  /// GET USER LOCATION
-  getUserLocation() async {
-    var currentLocation = await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    if (showAddAsHome) {
+      wid = Stack(
+        children: <Widget>[
+          Positioned(
+            top: 60,
+            height: 40,
+            right: 15,
+            child: RaisedButton(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              textColor: Colors.white,
+              onPressed: changeHomeAddress,
+              color: Colors.green,
+              elevation: 5,
+              child: Text("Es mi Casa!"),
+            ),
+          )
+        ],
+      );
+    } else {
+      wid = Container();
+    }
 
-    setState(() {
-      _myPosition = LatLng(currentLocation.latitude, currentLocation.longitude);
-    });
-
-    await calculateDistanceToHome();
-  }
-
-  /// GET DISTANCE FROM myPos to myHome
-  Future calculateDistanceToHome() async {
-    _distance = await Geolocator().distanceBetween(_myHome.latitude,
-        _myHome.longitude, _myPosition.latitude, _myPosition.longitude);
+    return wid;
   }
 }
