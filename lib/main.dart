@@ -106,8 +106,12 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Stack(
         children: <Widget>[
-          WMap(_myHome, recentlySearchedAddress,
-              (pos) => onNewAddressSearched(pos)),
+          WMap(
+            _myHome,
+            recentlySearchedAddress,
+            trackLocation,
+            (pos) => onNewAddressSearched(pos),
+          ),
           WDistance(_distance, trackLocation, _maxAllowedMeters),
           /*showAddressSearch
               ? WSelectHome((newHome) => onNewAddressSearched(newHome))

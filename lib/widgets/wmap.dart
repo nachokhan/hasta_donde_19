@@ -8,8 +8,9 @@ class WMap extends StatelessWidget {
   final LatLng _recentlySearchedAdress;
   final Completer<GoogleMapController> _controller = Completer();
   final Function longPress;
+  final bool showLocation;
 
-  WMap(this._myHome, this._recentlySearchedAdress, this.longPress);
+  WMap(this._myHome, this._recentlySearchedAdress, this.showLocation, this.longPress);
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +18,8 @@ class WMap extends StatelessWidget {
       onMapCreated: _onMapCreated,
       onLongPress: (pos) => longPress(pos),
       initialCameraPosition: getInitialPosition(),
-      myLocationButtonEnabled: true,
-      myLocationEnabled: true,
+      myLocationButtonEnabled: showLocation,
+      myLocationEnabled: showLocation,
       markers: {
         //if (_recentlySearchedAdress == null)
         Marker(
