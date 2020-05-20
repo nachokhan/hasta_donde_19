@@ -38,9 +38,12 @@ class _MyHomePageState extends State<MyHomePage> {
   var _myHome = _initialCameraPosition;
   LatLng _myPosition;
   double _distance = 0.0;
-  CameraPosition _initialPosition = CameraPosition(target: _initialCameraPosition, zoom: 12);
-  var trackLocation = false;
+  CameraPosition _initialPosition =
+      CameraPosition(target: _initialCameraPosition, zoom: 12);
   final double _maxAllowedMeters = 5000;
+
+  var trackLocation = false;
+  var showHomeSelector = false;
 
   StreamSubscription<Position> strSubscription;
 
@@ -92,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
         actions: <Widget>[
           IconButton(
-              icon: Icon(Icons.home),
+              icon: Icon(Icons.search),
               onPressed: () => onPressSelectHome(context)),
           IconButton(icon: Icon(Icons.track_changes), onPressed: getLocation),
           //IconButton(icon: null, onPressed: null)
@@ -102,22 +105,23 @@ class _MyHomePageState extends State<MyHomePage> {
         children: <Widget>[
           WMap(this._initialPosition, _myHome),
           WDistance(_distance, trackLocation, _maxAllowedMeters),
+          showHomeSelector ? WSelectHome((newHome) => onChangeHomeAddress(newHome)): Container(),
         ],
       ),
     );
   }
 
-  onChangeHomeAddress(LatLng newHome)
-  {
+  onChangeHomeAddress(LatLng newHome) {
     setState(() {
       _myHome = newHome;
+      showHomeSelector = false;
     });
-    
   }
 
   onPressSelectHome(BuildContext context) {
-    showModalBottomSheet(
-        context: context, builder: (context) => getSelectHomeWidget(context));
+    setState(() {
+      showHomeSelector = !showHomeSelector;
+    });
   }
 
   getSelectHomeWidget(BuildContext context) {
