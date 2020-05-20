@@ -93,6 +93,8 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        backgroundColor: Color.fromARGB(255, 0, 128, 126),
+        leading: Image.asset('assets/images/appicon.png'),
         actions: <Widget>[
           IconButton(
               icon: Icon(Icons.search),
