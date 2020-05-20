@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:por_donde/controllers/locationController.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import './widgets/wselecthome.dart';
+// import './widgets/wselecthome.dart';
 import './widgets/wdistance.dart';
 import './widgets/wmap.dart';
 
@@ -72,6 +73,12 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
 
+    loadHomeLocationFromDisk().then((val) {
+      setState(() {
+        _myHome = val;
+      });
+    });
+
     GeoLocationController()
         .getUserLocation()
         .then((value) => _myPosition = LatLng(value.latitude, value.longitude));
@@ -120,6 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       if (recentlySearchedAddress != null) {
         _myHome = recentlySearchedAddress;
+        saveHomeLocationInDisk();
         showAddressSearch = false;
         showAddAsHome = false;
       }
@@ -162,5 +170,19 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     return wid;
+  }
+
+  void saveHomeLocationInDisk() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble("homeLatitude", _myHome.latitude);
+    await prefs.setDouble("homeLongitude", _myHome.longitude);
+  }
+
+  Future<LatLng> loadHomeLocationFromDisk() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    double lat = prefs.getDouble("homeLatitude");
+    double lon = prefs.getDouble("homeLongitude");
+
+    return LatLng(lat, lon);
   }
 }
