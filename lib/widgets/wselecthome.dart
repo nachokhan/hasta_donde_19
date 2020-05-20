@@ -19,14 +19,15 @@ class _WSelectHomeState extends State<WSelectHome> {
     return Stack(
       children: <Widget>[
         Positioned(
-          top: 15,
+          top: 5,
           left: 15,
           right: 15,
           child: Container(
-            height: 150,
+            height: 50,
             width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.black),
               color: Colors.white,
             ),
             child: TextField(
@@ -38,7 +39,6 @@ class _WSelectHomeState extends State<WSelectHome> {
                   icon: Icon(Icons.search),
                   onPressed: () {
                     searchAndNavigate();
-                    Focus.of(context).unfocus();
                   },
                   iconSize: 30.0,
                 ),
