@@ -22,6 +22,7 @@ https://medium.com/comunidad-flutter/google-maps-en-flutter-98bedecb528b
 
 https://alligator.io/flutter/geolocator-plugin/
 https://pub.dev/packages/geolocator#-readme-tab-
+https://pub.dev/packages/location (Check THIS ONE for the future!)
 
 
 ### State Management
