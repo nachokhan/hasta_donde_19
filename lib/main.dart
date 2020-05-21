@@ -217,7 +217,11 @@ class _MyHomePageState extends State<MyHomePage> {
     LatLng pos;
 
     if (lat == null || lon == null)
-      pos = _initialCameraPos;
+      GeoLocationController().getUserLocation().then((value) {
+        setState(() {
+          pos = LatLng(value.latitude, value.longitude);
+        });
+      });
     else
       pos = LatLng(lat, lon);
 
