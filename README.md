@@ -36,3 +36,7 @@ https://medium.com/@ayushpguptaapg/using-streams-in-flutter-62fed41662e4
 ### Persisting small data (shared_preferences)
 
 https://medium.com/flutterdevs/using-sharedpreferences-in-flutter-251755f07127
+
+### Permission Handler
+
+https://pub.dev/packages/permission_handler

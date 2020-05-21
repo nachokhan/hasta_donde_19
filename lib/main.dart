@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:por_donde/controllers/locationController.dart';
+import 'package:por_donde/widgets/wOptionsMenu.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 //import './widgets/wselecthome.dart';
 import './widgets/wdistance.dart';
@@ -35,8 +37,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  static LatLng _initialCameraPos = LatLng(-32.9556782, -68.8547009);
-  var _myHome = _initialCameraPos;
+  //static LatLng _initialCameraPos = LatLng(-32.9556782, -68.8547009);
+  LatLng _myHome;// = _initialCameraPos;
   LatLng _myPosition;
   double _distance = 0.0;
   final double _maxAllowedMeters = 5000;
@@ -46,8 +48,11 @@ class _MyHomePageState extends State<MyHomePage> {
   var trackLocation = false;
   var showAddressSearch = false;
   var showAddAsHome = false;
+  var locationPermission = false;
 
   changeGetLocation() {
+    if (!locationPermission) return;
+
     if (trackLocation) {
       setState(() {
         trackLocation = false;
@@ -74,17 +79,28 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
 
+    Permission.location.request().then((value) {
+      if (value == PermissionStatus.granted)
+        setState(() {
+          locationPermission = true;
+          changeGetLocation();
+        });
+      else
+        setState(() {
+          locationPermission = false;
+          trackLocation = false;
+        });
+    });
+
     loadHomeLocationFromDisk().then((val) {
       setState(() {
         _myHome = val;
       });
     });
 
-    GeoLocationController()
-        .getUserLocation()
-        .then((value) => _myPosition = LatLng(value.latitude, value.longitude));
-
-    changeGetLocation();
+    if (locationPermission)
+      GeoLocationController().getUserLocation().then(
+          (value) => _myPosition = LatLng(value.latitude, value.longitude));
   }
 
   LatLng newHome;
@@ -97,14 +113,16 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Color.fromARGB(255, 0, 128, 126),
         leading: Image.asset('assets/images/appicon.png'),
         actions: <Widget>[
-        /*  IconButton(
+          /*  IconButton(
             icon: Icon(Icons.search),
             onPressed: () => onPressSelectHome(context),
           ),*/
-          IconButton(
-            icon: Icon(Icons.track_changes),
-            onPressed: changeGetLocation,
-          ),
+          locationPermission
+              ? IconButton(
+                  icon: Icon(Icons.track_changes),
+                  onPressed: changeGetLocation,
+                )
+              : Container(),
           //IconButton(icon: null, onPressed: null)
         ],
       ),
@@ -120,53 +138,10 @@ class _MyHomePageState extends State<MyHomePage> {
           /*showAddressSearch
               ? WSelectHome((newHome) => onNewAddressSearched(newHome))
               : Container(),*/
-          showButtonAddAsHome(),
+          WOptionsMenu(showAddAsHome, changeHomeAddress, cancelHomeSelection),
         ],
       ),
     );
-  }
-
-  showButtonAddAsHome() {
-    Widget wid;
-
-    if (showAddAsHome) {
-      wid = Stack(
-        children: <Widget>[
-          Positioned(
-            top: 60,
-            height: 40,
-            right: 15,
-            child: RaisedButton(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-              textColor: Colors.white,
-              color: Color.fromARGB(255, 0, 128, 120),
-              elevation: 5,
-              child: Text("Es mi Casa!"),
-              onPressed: changeHomeAddress,
-            ),
-          ),
-          Positioned(
-            top: 105,
-            height: 40,
-            right: 15,
-            child: RaisedButton(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-              textColor: Colors.white,
-              color: Color.fromARGB(255, 0, 128, 120),
-              elevation: 5,
-              child: Text("Cancelar"),
-              onPressed: cancelHomeSelection,
-            ),
-          ),
-        ],
-      );
-    } else {
-      wid = Container();
-    }
-
-    return wid;
   }
 
   void cancelHomeSelection() {
@@ -216,14 +191,23 @@ class _MyHomePageState extends State<MyHomePage> {
 
     LatLng pos;
 
-    if (lat == null || lon == null)
-      GeoLocationController().getUserLocation().then((value) {
-        setState(() {
-          pos = LatLng(value.latitude, value.longitude);
-        });
-      });
-    else
+    if (lat != null && lon != null) {
       pos = LatLng(lat, lon);
+    } else {
+      if (locationPermission) {
+        await GeoLocationController().getUserLocation().then((value) {
+          setState(() {
+            pos = LatLng(value.latitude, value.longitude);
+          });
+        });
+      } else {
+        setState(() {
+          trackLocation = false;
+          locationPermission = false;
+          pos = LatLng(-32.8908400, -68.8271700);
+        });
+      }
+    }
 
     return pos;
   }
