@@ -1,14 +1,17 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:por_donde/controllers/locationController.dart';
-import 'package:por_donde/widgets/wOptionsMenu.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 //import './widgets/wselecthome.dart';
+import './controllers/locationController.dart';
+import './widgets/wOptionsMenu.dart';
 import './widgets/wdistance.dart';
 import './widgets/wmap.dart';
+import './models/states.dart';
 
 void main() {
   runApp(MyApp());
@@ -37,43 +40,18 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  //static LatLng _initialCameraPos = LatLng(-32.9556782, -68.8547009);
-  LatLng _myHome;// = _initialCameraPos;
+  LatLng _myHome;
   LatLng _myPosition;
   double _distance = 0.0;
   final double _maxAllowedMeters = 5000;
-
   LatLng recentlySearchedAddress;
+  LatLng newHome;
 
+  var appState = eAppStates.MapScreen;
   var trackLocation = false;
   var showAddressSearch = false;
   var showAddAsHome = false;
   var locationPermission = false;
-
-  changeGetLocation() {
-    if (!locationPermission) return;
-
-    if (trackLocation) {
-      setState(() {
-        trackLocation = false;
-      });
-      GeoLocationController().stopListening();
-    } else {
-      setState(() {
-        trackLocation = true;
-      });
-      GeoLocationController().startListening((pos) => onPositionChanged(pos));
-    }
-  }
-
-  onPositionChanged(Position pos) {
-    setState(() {
-      _myPosition = LatLng(pos.latitude, pos.longitude);
-      GeoLocationController()
-          .calculateDistanceToHome(_myPosition, _myHome)
-          .then((value) => _distance = value);
-    });
-  }
 
   @override
   void initState() {
@@ -103,8 +81,6 @@ class _MyHomePageState extends State<MyHomePage> {
           (value) => _myPosition = LatLng(value.latitude, value.longitude));
   }
 
-  LatLng newHome;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -122,26 +98,103 @@ class _MyHomePageState extends State<MyHomePage> {
                   icon: Icon(Icons.track_changes),
                   onPressed: changeGetLocation,
                 )
-              : Container(),
+              : null,
+          IconButton(
+            icon: Icon(Icons.help_outline),
+            onPressed: () {
+              setState(() {
+                appState = eAppStates.HelpScreen;
+              });
+            },
+          )
           //IconButton(icon: null, onPressed: null)
         ],
       ),
       body: Stack(
         children: <Widget>[
-          WMap(
-            _myHome,
-            recentlySearchedAddress,
-            trackLocation,
-            (pos) => onNewAddressSearched(pos),
-          ),
-          WDistance(_distance, trackLocation, _maxAllowedMeters),
+          if (appState == eAppStates.MapScreen) ...getMapScreenWidgets(),
+          if (appState == eAppStates.HelpScreen) ...getHelpScreenWidgets(),
           /*showAddressSearch
-              ? WSelectHome((newHome) => onNewAddressSearched(newHome))
-              : Container(),*/
+                        ? WSelectHome((newHome) => onNewAddressSearched(newHome))
+                        : Container(),*/
           WOptionsMenu(showAddAsHome, changeHomeAddress, cancelHomeSelection),
         ],
       ),
     );
+  }
+
+  List<Widget> getMapScreenWidgets() {
+    return [
+      WMap(
+        _myHome,
+        recentlySearchedAddress,
+        trackLocation,
+        (pos) => onNewAddressSearched(pos),
+      ),
+      WDistance(_distance, trackLocation, _maxAllowedMeters),
+    ];
+  }
+
+  getHelpScreenWidgets() {
+    return [
+      Card(
+        elevation: 5,
+        margin: EdgeInsets.all(20),
+        borderOnForeground: true,
+        child: Container(
+          child: Column(
+            children: <Widget>[
+              Text(
+                "Acerca de la App",
+                style: TextStyle(
+                    fontSize: 30, decorationStyle: TextDecorationStyle.double),
+              ),
+              Text(
+                """¿Por Dónde Andar? es una app para en todo momento sepas si estás o no dentro de los 5km permitidos.\n\nLa primera vez que usas la App tenés que indicar dónde está tu casa. Actualmente, la forma de hacer esto ir en el mapa a donde vivis y mantener presionando con el dedo. Seguido de esto te va a aparecer un cosito verde y un botón que dice \"Es mi casa\". Si lo parsionás, guardás ese lugar como tu casa.\n\nSi querés cambiar el lugar donde tu vivís, repetís ese procedimiento. ¡Es muy fácil!. \n\nNacho L.""",
+                style: TextStyle(fontSize: 18),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: RaisedButton(
+                    child: Text("Volver"),
+                    color: Color.fromARGB(240, 0, 126, 128),
+                    textColor: Colors.white,
+                    onPressed: () {
+                      setState(() {
+                        appState = eAppStates.MapScreen;
+                      });
+                    }),
+              ),
+            ],
+          ),
+        ),
+      )
+    ];
+  }
+
+  changeGetLocation() {
+    if (!locationPermission) return;
+
+    if (trackLocation) {
+      setState(() {
+        trackLocation = false;
+      });
+      GeoLocationController().stopListening();
+    } else {
+      setState(() {
+        trackLocation = true;
+      });
+      GeoLocationController().startListening((pos) => onPositionChanged(pos));
+    }
+  }
+
+  onPositionChanged(Position pos) {
+    setState(() {
+      _myPosition = LatLng(pos.latitude, pos.longitude);
+      GeoLocationController()
+          .calculateDistanceToHome(_myPosition, _myHome)
+          .then((value) => _distance = value);
+    });
   }
 
   void cancelHomeSelection() {
