@@ -114,6 +114,8 @@ class _MyHomePageState extends State<MyHomePage> {
           if (appState == eAppStates.MapScreen) ...getMapScreenWidgets(),
           if (appState == eAppStates.HelpScreen)
             WHelp(() => setAppState(eAppStates.MapScreen)),
+          if (showAddAsHome)
+            WOptionsMenu(changeHomeAddress, cancelHomeSelection),
         ],
       ),
     );
