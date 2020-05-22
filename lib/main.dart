@@ -89,16 +89,16 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Color.fromARGB(255, 0, 128, 126),
         leading: Image.asset('assets/images/appicon.png'),
         actions: <Widget>[
-          /*  IconButton(
+          /*IconButton(
             icon: Icon(Icons.search),
             onPressed: () => onPressSelectHome(context),
           ),*/
-          locationPermission
-              ? IconButton(
-                  icon: Icon(Icons.track_changes),
-                  onPressed: changeGetLocation,
-                )
-              : null,
+          if (locationPermission)
+            IconButton(
+              icon: Icon(Icons.router),
+							color: trackLocation ? Colors.white : Colors.grey,
+              onPressed: changeGetLocation,
+            ),
           IconButton(
             icon: Icon(Icons.help_outline),
             onPressed: () {
@@ -107,7 +107,6 @@ class _MyHomePageState extends State<MyHomePage> {
               });
             },
           )
-          //IconButton(icon: null, onPressed: null)
         ],
       ),
       body: Stack(
