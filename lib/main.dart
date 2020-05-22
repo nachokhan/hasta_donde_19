@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:por_donde/widgets/whelp.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -13,10 +12,11 @@ import './controllers/assetsController.dart';
 import './controllers/locationController.dart';
 
 import './widgets/whelp.dart';
+import './widgets/wselecthome.dart';
 import './widgets/wOptionsMenu.dart';
 import './widgets/wdistance.dart';
 import './widgets/wmap.dart';
-import './models/states.dart';
+
 
 void main() {
   runApp(MyApp());
@@ -96,10 +96,10 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Color.fromARGB(255, 0, 128, 126),
         leading: Image.asset('assets/images/appicon.png'),
         actions: <Widget>[
-          /*IconButton(
+          IconButton(
             icon: Icon(Icons.search),
-            onPressed: () => onPressSelectHome(context),
-          ),*/
+            onPressed: () => onPressSelectHome(),
+          ),
           if (locationPermission)
             IconButton(
               icon: Icon(Icons.router),
@@ -193,7 +193,7 @@ class _MyHomePageState extends State<MyHomePage> {
     recentlySearchedAddress = null;
   }
 
-  onPressSelectHome(BuildContext context) {
+  onPressSelectHome() {
     setState(() {
       showAddressSearch = !showAddressSearch;
       showAddAsHome = false;
