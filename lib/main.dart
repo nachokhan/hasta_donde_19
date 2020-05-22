@@ -6,7 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-//import './widgets/wselecthome.dart';
+import './widgets/wselecthome.dart';
 import './controllers/locationController.dart';
 import './widgets/wOptionsMenu.dart';
 import './widgets/wdistance.dart';
@@ -114,6 +114,8 @@ class _MyHomePageState extends State<MyHomePage> {
           if (appState == eAppStates.MapScreen) ...getMapScreenWidgets(),
           if (appState == eAppStates.HelpScreen)
             WHelp(() => setAppState(eAppStates.MapScreen)),
+          if (showAddressSearch)
+            WSelectHome((newHome) => onAddressSelected(newHome)),
           if (showAddAsHome)
             WOptionsMenu(changeHomeAddress, cancelHomeSelection),
         ],
@@ -127,7 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
         _myHome,
         recentlySearchedAddress,
         trackLocation,
-        (pos) => onNewAddressSearched(pos),
+        (pos) => onAddressSelected(pos),
       ),
       WDistance(_distance, trackLocation, _maxAllowedMeters),
     ];
@@ -165,7 +167,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void onNewAddressSearched(LatLng newAddress) {
+  void onAddressSelected(LatLng newAddress) {
     setState(() {
       recentlySearchedAddress = newAddress;
       showAddAsHome = true;
