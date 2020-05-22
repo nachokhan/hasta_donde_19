@@ -106,7 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
           if (locationPermission)
             IconButton(
               icon: Icon(Icons.router),
-							color: trackLocation ? Colors.white : Colors.grey,
+              color: trackLocation ? Colors.white : Colors.grey,
               onPressed: changeGetLocation,
             ),
           IconButton(
