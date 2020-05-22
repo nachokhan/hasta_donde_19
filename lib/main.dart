@@ -1,14 +1,18 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:por_donde/widgets/whelp.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import './widgets/wselecthome.dart';
+import './models/states.dart';
+import './controllers/assetsController.dart';
 import './controllers/locationController.dart';
+
+import './widgets/whelp.dart';
 import './widgets/wOptionsMenu.dart';
 import './widgets/wdistance.dart';
 import './widgets/wmap.dart';
@@ -54,6 +58,8 @@ class _MyHomePageState extends State<MyHomePage> {
   var showAddAsHome = false;
   var locationPermission = false;
 
+  String helpText;
+
   @override
   void initState() {
     super.initState();
@@ -65,10 +71,10 @@ class _MyHomePageState extends State<MyHomePage> {
           changeGetLocation();
         });
       else
-        setState(() {
-          locationPermission = false;
-          trackLocation = false;
-        });
+    loadTextAsse2t("assets/text/help.txt").then((value) {
+      setState(() {
+        helpText = value;
+      });
     });
 
     loadHomeLocationFromDisk().then((val) {
@@ -114,7 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
         children: <Widget>[
           if (appState == eAppStates.MapScreen) ...getMapScreenWidgets(),
           if (appState == eAppStates.HelpScreen)
-            WHelp(() => setAppState(eAppStates.MapScreen)),
+            WHelp(() => setAppState(eAppStates.MapScreen), helpText),
           if (showAddressSearch)
             WSelectHome((newHome) => onAddressSelected(newHome)),
           if (showAddAsHome)

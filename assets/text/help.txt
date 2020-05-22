@@ -1,0 +1,24 @@
+¿Por Dónde Andar? es una app para que en todo momento sepas si estás o no dentro del radio de kilómetros permitidos por el gobierno a causa de la pandemia del Covid-19.
+
+La primera vez que usas la App tenés que indicar dónde está tu casa. 
+Hay dos formas de hacer esto: 
+
+1) En el mapa, mantenés presionando el dedo en el lugar de tu casa, hasta que aparece un "cosito" verde y un botón que dice "Es mi casa". Hacele "click" y y listo: tu casa está guardada. 
+
+2) La otra opción: hacés click en la lupa arriba a la izquierda y cuando aparece el campo para escribir, escribís tu dirección (lo más precisa posible y sin errores). Por ejemplo:
+
+Bien --> "San Martín 234, Godoy Cruz, Mendoza, Argentina."
+
+Mal --> "San Martñin 234, Argentina"
+
+Si encontró tu dirección, va a aparecer el "cosito" verde y el botón "Es mi casa!". Hacele click, y ¡listo!
+
+
+Este programa está en versión beta (prueba). Esto significa básicamente que puede haber errores y seguramente algunas mejoras. Toda crítica constructiva es bienvenida.
+Comunicate conmigo por cualquier aporte o sugerencia.
+
+
+¡Gracias, muchas!
+
+
+Nacho Lockenkopf (ig: @nachokhan1107)

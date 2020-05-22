@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 class WHelp extends StatelessWidget {
   final onPressCancel;
+  final String helpText;
 
-  WHelp(this.onPressCancel);
+  WHelp(this.onPressCancel, this.helpText);
 
   @override
   Widget build(BuildContext context) {
@@ -14,22 +15,55 @@ class WHelp extends StatelessWidget {
       child: Container(
         child: Column(
           children: <Widget>[
-            Text(
-              "Acerca de la App",
-              style: TextStyle(
-                  fontSize: 30, decorationStyle: TextDecorationStyle.double),
+            Container(
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black),
+                  borderRadius: BorderRadius.circular(5)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Image(
+                    image: AssetImage('assets/images/appicon.png'),
+                    height: 40,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      "Acerca de la App",
+                      style: TextStyle(
+                          fontSize: 20,
+                          decorationStyle: TextDecorationStyle.double),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: RaisedButton(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18.0),
+                        //  side: BorderSide(color: Colors.white),
+                      ),
+                      child: Text("Volver"),
+                      elevation: 6,
+                      color: Color.fromARGB(240, 0, 126, 128),
+                      textColor: Colors.white,
+                      onPressed: onPressCancel,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            Text(
-              """¿Por Dónde Andar? es una app para en todo momento sepas si estás o no dentro de los 5km permitidos.\n\nLa primera vez que usas la App tenés que indicar dónde está tu casa. Actualmente, la forma de hacer esto ir en el mapa a donde vivis y mantener presionando con el dedo. Seguido de esto te va a aparecer un cosito verde y un botón que dice \"Es mi casa\". Si lo parsionás, guardás ese lugar como tu casa.\n\nSi querés cambiar el lugar donde tu vivís, repetís ese procedimiento. ¡Es muy fácil!. \n\nNacho L.""",
-              style: TextStyle(fontSize: 18),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: RaisedButton(
-                child: Text("Volver"),
-                color: Color.fromARGB(240, 0, 126, 128),
-                textColor: Colors.white,
-                onPressed: onPressCancel,
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black),
+                    borderRadius: BorderRadius.circular(5)),
+                child: SingleChildScrollView(
+                  child: Text(
+                    helpText,
+                    style: TextStyle(fontSize: 15),
+                  ),
+                ),
               ),
             ),
           ],
