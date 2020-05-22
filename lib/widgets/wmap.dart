@@ -10,7 +10,8 @@ class WMap extends StatelessWidget {
   final Function longPress;
   final bool showLocation;
 
-  WMap(this._initialPos, this._recentlySearchedAdress, this.showLocation, this.longPress);
+  WMap(this._initialPos, this._recentlySearchedAdress, this.showLocation,
+      this.longPress);
 
   @override
   Widget build(BuildContext context) {
@@ -47,5 +48,5 @@ class WMap extends StatelessWidget {
 
   void _onMapCreated(GoogleMapController controller) {
     _controller.complete(controller);
-  } 
+  }
 }
