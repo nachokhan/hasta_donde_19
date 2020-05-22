@@ -225,4 +225,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return pos;
   }
+
+  setAppState(eAppStates state) {
+    setState(() {
+      appState = state;
+    });
+  }
 }
