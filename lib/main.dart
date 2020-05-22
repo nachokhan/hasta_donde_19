@@ -71,6 +71,9 @@ class _MyHomePageState extends State<MyHomePage> {
           changeGetLocation();
         });
       else
+        SystemNavigator.pop();
+    });
+
     loadTextAsse2t("assets/text/help.txt").then((value) {
       setState(() {
         helpText = value;
