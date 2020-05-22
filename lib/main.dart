@@ -112,11 +112,8 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Stack(
         children: <Widget>[
           if (appState == eAppStates.MapScreen) ...getMapScreenWidgets(),
-          if (appState == eAppStates.HelpScreen) ...getHelpScreenWidgets(),
-          /*showAddressSearch
-                        ? WSelectHome((newHome) => onNewAddressSearched(newHome))
-                        : Container(),*/
-          WOptionsMenu(showAddAsHome, changeHomeAddress, cancelHomeSelection),
+          if (appState == eAppStates.HelpScreen)
+            WHelp(() => setAppState(eAppStates.MapScreen)),
         ],
       ),
     );
