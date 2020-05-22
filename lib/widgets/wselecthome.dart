@@ -3,9 +3,9 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class WSelectHome extends StatefulWidget {
-  final Function changeAddress;
+  final Function onAddressSelected;
 
-  WSelectHome(this.changeAddress);
+  WSelectHome(this.onAddressSelected);
 
   @override
   _WSelectHomeState createState() => _WSelectHomeState();
@@ -34,7 +34,7 @@ class _WSelectHomeState extends State<WSelectHome> {
               child: TextField(
                 autofocus: true,
                 decoration: InputDecoration(
-                  hintText: "Address",                  
+                  hintText: "Address",
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.only(left: 15.0, top: 15.0),
                   suffixIcon: IconButton(
@@ -59,10 +59,11 @@ class _WSelectHomeState extends State<WSelectHome> {
 
   searchAndNavigate() {
     Geolocator().placemarkFromAddress(address).then((value) {
-      double lat = value[0].position.latitude;
-      double lon = value[0].position.longitude;
-
-      widget.changeAddress(LatLng(lat, lon));
+      if (value != null) {
+        double lat = value[0].position.latitude;
+        double lon = value[0].position.longitude;
+        widget.onAddressSelected(LatLng(lat, lon));
+      }
     });
   }
 }
