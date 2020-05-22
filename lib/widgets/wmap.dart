@@ -15,6 +15,9 @@ class WMap extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (_initialPos == null)
+      return Center(child: Text("Esperando ubicación..."));
+
     return GoogleMap(
       onMapCreated: _onMapCreated,
       onLongPress: (pos) => longPress(pos),
