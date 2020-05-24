@@ -41,3 +41,8 @@ https://medium.com/flutterdevs/using-sharedpreferences-in-flutter-251755f07127
 ### Permission Handler
 
 https://pub.dev/packages/permission_handler
+
+
+### MP3 playing
+
+https://pub.dev/packages/audioplayers

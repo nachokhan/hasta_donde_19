@@ -4,8 +4,10 @@ class WDistance extends StatelessWidget {
   final double _distance;
   final bool isTracking;
   final double maxAllowedMeters;
+  final Function onOutOfRange;
 
-  WDistance(this._distance, this.isTracking, this.maxAllowedMeters);
+  WDistance(this._distance, this.isTracking, this.maxAllowedMeters,
+      this.onOutOfRange);
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +55,7 @@ class WDistance extends StatelessWidget {
     String text = "Dist a casa: $distancia";
 
     if (_distance >= this.maxAllowedMeters) {
+			onOutOfRange();
       var ex = getDistanceWithUnitsAsString(_distance - this.maxAllowedMeters);
       text += "\nExcedido en: $ex";
     }

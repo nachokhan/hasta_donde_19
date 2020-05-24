@@ -27,6 +27,7 @@ dependencies:
   geolocator: ^5.3.1
   shared_preferences: ^0.5.7+2
   permission_handler: ^5.0.0+hotfix.6
+  audioplayers: ^0.15.1
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -52,6 +53,7 @@ flutter:
   assets:
     - assets/images/appicon.png
     - assets/text/help.txt
+    - assets/sounds/warn_auto.mp3
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:audioplayers/audio_cache.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
@@ -56,8 +58,11 @@ class _MyHomePageState extends State<MyHomePage> {
   var showAddressSearch = false;
   var showAddAsHome = false;
   var locationPermission = false;
+  var playAudioWarning = true;
 
   GoogleMapController mapController;
+  AudioPlayer audioPlayer;
+  AudioCache cache;
 
   String helpText;
 
@@ -76,7 +81,10 @@ class _MyHomePageState extends State<MyHomePage> {
         SystemNavigator.pop();
     });
 
-		// Load the help text
+    // Create the Audio Player Controller
+    cache = new AudioCache();
+
+    // Load the help text
     loadTextAssets("assets/text/help.txt").then((value) {
       setState(() {
         helpText = value;
@@ -100,13 +108,13 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(widget.title), titleSpacing: 0.0,
         backgroundColor: Color.fromARGB(255, 0, 128, 126),
         leading: Image.asset('assets/images/appicon.png'),
-        actions: <Widget>[
+        actions: <Widget>[					
           IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () => onPressSelectHome(),
+            icon: Icon(playAudioWarning ? Icons.volume_up : Icons.volume_off),
+            onPressed: changePlayAudioWarning,
           ),
           if (locationPermission)
             IconButton(
@@ -114,6 +122,10 @@ class _MyHomePageState extends State<MyHomePage> {
               color: trackLocation ? Colors.white : Colors.grey,
               onPressed: changeGetLocation,
             ),
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () => onPressSelectHome(),
+          ),
           IconButton(
             icon: Icon(Icons.help_outline),
             onPressed: () {
@@ -147,7 +159,8 @@ class _MyHomePageState extends State<MyHomePage> {
         (con) => setMapController(con),
         (pos) => onAddressSelected(pos),
       ),
-      WDistance(_distance, trackLocation, _maxAllowedMeters),
+      WDistance(_distance, trackLocation, _maxAllowedMeters,
+          () => playSound("sounds/warn_auto.mp3")),
     ];
   }
 
@@ -260,6 +273,28 @@ class _MyHomePageState extends State<MyHomePage> {
   setAppState(eAppStates state) {
     setState(() {
       appState = state;
+    });
+  }
+
+  Future<AudioPlayer> playSound(String s) async {
+    if (!playAudioWarning) {
+      if (audioPlayer != null && audioPlayer.state == AudioPlayerState.PLAYING)
+        audioPlayer.stop();
+      return null;
+    }
+
+    if (audioPlayer != null && audioPlayer.state == AudioPlayerState.PLAYING)
+      return null;
+    else
+      return await cache.play(s).then((value) {
+        audioPlayer = value;
+        return;
+      });
+  }
+
+  void changePlayAudioWarning() {
+    setState(() {
+      playAudioWarning = !playAudioWarning;
     });
   }
 }
