@@ -66,6 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
 
+		// Request Location Permisses (if not granted, quit)
     Permission.location.request().then((value) {
       if (value == PermissionStatus.granted)
         setState(() {
@@ -76,18 +77,20 @@ class _MyHomePageState extends State<MyHomePage> {
         SystemNavigator.pop();
     });
 
-    loadTextAsse2t("assets/text/help.txt").then((value) {
+		// Load the help text
       setState(() {
         helpText = value;
       });
     });
 
+		// Try to see if there is already a home setted.
     loadHomeLocationFromDisk().then((val) {
       setState(() {
         _myHome = val;
       });
     });
 
+		// Try to get the user location
     if (locationPermission)
       GeoLocationController().getUserLocation().then(
           (value) => _myPosition = LatLng(value.latitude, value.longitude));
@@ -187,6 +190,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void onAddressSelected(LatLng newAddress) {
     setState(() {
       recentlySearchedAddress = newAddress;
+      showAddAsHome = true;		// show button Add&Cancel
+
 			// Move the camera to the new selected position so the
 			// user sees what he did select.
       if (mapController != null) {
