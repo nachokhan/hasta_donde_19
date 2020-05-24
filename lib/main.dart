@@ -17,7 +17,6 @@ import './widgets/wOptionsMenu.dart';
 import './widgets/wdistance.dart';
 import './widgets/wmap.dart';
 
-
 void main() {
   runApp(MyApp());
 }
@@ -78,6 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
 		// Load the help text
+    loadTextAssets("assets/text/help.txt").then((value) {
       setState(() {
         helpText = value;
       });
