@@ -58,6 +58,8 @@ class _MyHomePageState extends State<MyHomePage> {
   var showAddAsHome = false;
   var locationPermission = false;
 
+  GoogleMapController mapController;
+
   String helpText;
 
   @override
@@ -139,10 +141,15 @@ class _MyHomePageState extends State<MyHomePage> {
         _myHome,
         recentlySearchedAddress,
         trackLocation,
+        (con) => setMapController(con),
         (pos) => onAddressSelected(pos),
       ),
       WDistance(_distance, trackLocation, _maxAllowedMeters),
     ];
+  }
+
+  setMapController(GoogleMapController con) {
+    mapController = con;
   }
 
   changeGetLocation() {
@@ -180,7 +187,14 @@ class _MyHomePageState extends State<MyHomePage> {
   void onAddressSelected(LatLng newAddress) {
     setState(() {
       recentlySearchedAddress = newAddress;
-      showAddAsHome = true;
+			// Move the camera to the new selected position so the
+			// user sees what he did select.
+      if (mapController != null) {
+        mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+          target: recentlySearchedAddress,
+          zoom: 10.5,
+        )));
+      }
     });
   }
 
